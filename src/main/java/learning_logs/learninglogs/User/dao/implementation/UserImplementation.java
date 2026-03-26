@@ -2,6 +2,7 @@ package learning_logs.learninglogs.User.dao.implementation;
 
 import learning_logs.learninglogs.User.dao.interfaces.UserInterface;
 import learning_logs.learninglogs.User.model.User;
+import org.mindrot.jbcrypt.BCrypt;
 import util.DBConnection;
 import util.query.UserQuery;
 
@@ -15,10 +16,11 @@ public class UserImplementation implements UserInterface {
     public boolean registerUser(User user) throws SQLException, ClassNotFoundException {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(UserQuery.insertUser)) {
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
             ps.setString(1, user.getUserName());
             ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPassword());
+            ps.setString(3, hashedPassword);
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -31,10 +33,9 @@ public class UserImplementation implements UserInterface {
              PreparedStatement ps = conn.prepareStatement(UserQuery.loginUser)) {
 
             ps.setString(1, email);
-            ps.setString(2, password);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
+                if (rs.next() && BCrypt.checkpw(password, rs.getString("password"))) {
                     return new User(
                             rs.getString("email"),
                             rs.getInt("id"),

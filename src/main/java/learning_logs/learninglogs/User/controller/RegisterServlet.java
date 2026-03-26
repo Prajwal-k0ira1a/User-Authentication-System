@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import learning_logs.learninglogs.User.model.User;
 import org.jetbrains.annotations.NotNull;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLException;
 
 @WebServlet("/register")
@@ -26,23 +28,27 @@ public class RegisterServlet extends HttpServlet {
         String email=req.getParameter("email");
         String password=req.getParameter("password");
 
-//        req.setAttribute("username",username);
-//        req.setAttribute("email",email);
-//        req.setAttribute("password",password);
-//        req.getRequestDispatcher("home.jsp").forward(req,resp);
+        String hashedPassword= BCrypt.hashpw(password,BCrypt.gensalt(12));
+        req.setAttribute("username", username);
+        req.setAttribute("email", email);
 
-        User user=new User(username,email,password);
+
+        User user=new User(username,email,hashedPassword);
         UserImplementation Impl=new UserImplementation();
 
         try{
             boolean success=Impl.registerUser(user);
         if(success){
-            req.setAttribute("success","Register Succcessfull");
+            req.setAttribute("success","Registration successful. Please sign in.");
             req.getRequestDispatcher("/login.jsp").forward(req,resp);
             return;
         }
 
             req.setAttribute("error", "Unable to register user.");
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
+        }
+        catch(SQLIntegrityConstraintViolationException e){
+            req.setAttribute("error", "An account with this email already exists.");
             req.getRequestDispatcher("/register.jsp").forward(req, resp);
         }
         catch(SQLException e){

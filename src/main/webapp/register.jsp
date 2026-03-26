@@ -18,6 +18,8 @@
 
       <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <% String error = (String) request.getAttribute("error"); %>
+        <% String username = (String) request.getAttribute("username"); %>
+        <% String email = (String) request.getAttribute("email"); %>
         <% if (error != null) { %>
           <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             <%= error %>
@@ -35,6 +37,7 @@
                 type="text"
                 autocomplete="username"
                 required
+                value="<%= username != null ? username : "" %>"
                 class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400
                        focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-100"
                 placeholder="yourname"
@@ -52,6 +55,7 @@
                 type="email"
                 autocomplete="email"
                 required
+                value="<%= email != null ? email : "" %>"
                 class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400
                        focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-100"
                 placeholder="jane@example.com"
