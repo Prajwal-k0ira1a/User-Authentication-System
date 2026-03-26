@@ -11,7 +11,7 @@ public class DBConnection {
     final static String DB_PASSWORD = "1234567890";
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
-//        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
     }
 

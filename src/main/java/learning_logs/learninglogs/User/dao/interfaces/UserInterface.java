@@ -6,6 +6,6 @@ import java.sql.SQLException;
 
 public interface UserInterface {
  boolean registerUser(User user) throws SQLException, ClassNotFoundException;
- User loginUser(String email,String password);
+ User loginUser(String email,String password) throws SQLException, ClassNotFoundException;
 
 }
