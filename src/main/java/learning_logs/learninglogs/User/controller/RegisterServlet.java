@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import learning_logs.learninglogs.User.model.User;
 import org.jetbrains.annotations.NotNull;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -28,12 +27,11 @@ public class RegisterServlet extends HttpServlet {
         String email=req.getParameter("email");
         String password=req.getParameter("password");
 
-        String hashedPassword= BCrypt.hashpw(password,BCrypt.gensalt(12));
         req.setAttribute("username", username);
         req.setAttribute("email", email);
 
 
-        User user=new User(username,email,hashedPassword);
+        User user=new User(username,email,password);
         UserImplementation Impl=new UserImplementation();
 
         try{
