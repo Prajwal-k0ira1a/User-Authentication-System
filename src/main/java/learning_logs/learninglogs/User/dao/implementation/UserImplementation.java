@@ -35,13 +35,21 @@ public class UserImplementation implements UserInterface {
             ps.setString(1, email);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next() && BCrypt.checkpw(password, rs.getString("password"))) {
-                    return new User(
-                            rs.getString("email"),
-                            rs.getInt("id"),
-                            rs.getString("user_name"),
-                            rs.getString("password")
-                    );
+                if (rs.next()) {
+                    String storedPassword = rs.getString("password");
+
+                    try {
+                        if (storedPassword != null && BCrypt.checkpw(password, storedPassword)) {
+                            return new User(
+                                    rs.getString("email"),
+                                    rs.getInt("id"),
+                                    rs.getString("user_name"),
+                                    storedPassword
+                            );
+                        }
+                    } catch (IllegalArgumentException e) {
+                        return null;
+                    }
                 }
             }
         }

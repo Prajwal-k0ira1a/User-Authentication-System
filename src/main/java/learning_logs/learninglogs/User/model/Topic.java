@@ -69,6 +69,6 @@ public class Topic {
 
     @Override
     public String toString() {
-        return name + " " +"was "+createdAt+ "and updated at"+updatedAt;
+        return title + " was " + createdAt + " and updated at " + updatedAt;
     }
 }
