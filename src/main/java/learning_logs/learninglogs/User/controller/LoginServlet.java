@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +34,11 @@ public class LoginServlet extends HttpServlet {
             if (user != null) {
                 HttpSession session = req.getSession();
                 session.setAttribute("loggedInUser", user);
+                session.setMaxInactiveInterval(30*60);
+                Cookie cookie = new Cookie("userId", String.valueOf(user.getEmail()));
+                cookie.setMaxAge(60 * 60*24 ); // 1 hour
+                resp.addCookie(cookie);
+
                 req.setAttribute("username", user.getUserName());
                 req.getRequestDispatcher("/home.jsp").forward(req, resp);
                 return;

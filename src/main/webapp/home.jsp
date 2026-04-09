@@ -28,8 +28,8 @@
         </p>
 
         <div class="mt-6 flex gap-3">
-            <a href="#" class="rounded-xl bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700">
-                Go to Dashboard
+            <a href="${pageContext.request.contextPath}/topics" class="rounded-xl bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700">
+                View My Topics
             </a>
             <a href="#" class="rounded-xl border border-slate-200 px-4 py-2 text-slate-700 font-semibold hover:bg-slate-50">
                 Logout
