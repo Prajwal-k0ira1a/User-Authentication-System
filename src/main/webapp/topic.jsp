@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="learning_logs.learninglogs.User.model.Topic" %>
+<%@ page import="learning_logs.learninglogs.User.dto.TopicDTO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Topics</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #4CAF50; /* green background */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+
 </head>
 <body class="bg-gray-100 min-h-screen">
 
@@ -28,30 +43,43 @@
                 <th class="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">Title</th>
                 <th class="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">Created At</th>
                 <th class="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">Updated At</th>
-                <th class="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">User ID</th>
+                <th class="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">User</th>
             </tr>
             </thead>
             <tbody>
             <%
-                List<Topic> topics = (List<Topic>) request.getAttribute("topics");
+                List<TopicDTO> topics = (List<TopicDTO>) request.getAttribute("topics");
                 if (topics != null && !topics.isEmpty()) {
-                    for (Topic topic : topics) {
+                    for (TopicDTO topic : topics) {
+                        String userName = topic.getUsername();
+                        String firstLetter = userName != null && !userName.isEmpty()
+                                ? userName.substring(0,1).toUpperCase()
+                                : "?";
             %>
+
             <tr class="hover:bg-gray-100">
+                <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700">
+                    <span class="circle"><%= firstLetter %></span>
+                    <p>Username: <%= userName %></p>
+                </td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700"><%= topic.getId() %></td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700"><%= topic.getTitle() %></td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700"><%= topic.getCreatedAt() %></td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700"><%= topic.getUpdatedAt() %></td>
-                <td class="border border-gray-200 px-4 py-2 text-sm text-gray-700"><%= topic.getUser_id() %></td>
+
             </tr>
+
             <%
-                    }
-                } else {
+                }
+            } else {
             %>
             <tr>
                 <td colspan="5" class="py-4 text-center text-gray-500">No topics found.</td>
             </tr>
-            <% } %>
+            <%
+                }
+            %>
+
             </tbody>
         </table>
     </div>
