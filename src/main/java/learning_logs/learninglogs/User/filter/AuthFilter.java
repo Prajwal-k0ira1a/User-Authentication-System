@@ -1,17 +1,23 @@
 package learning_logs.learninglogs.User.filter;
 
-import jakarta.servlet.*;
+import java.io.IOException;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import learning_logs.learninglogs.User.model.User;
 
-import java.io.IOException;
 @WebFilter(urlPatterns = "/*")
 public class AuthFilter implements Filter {
-    final String LOGIN_URL="/login";
-    final String REGISTER_URL="/register";
+    private static final String LOGIN_URL = "/login";
+    private static final String REGISTER_URL = "/register";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -20,26 +26,31 @@ public class AuthFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-         HttpServletRequest req=(HttpServletRequest) request;
-         HttpServletResponse res =(HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
-         HttpSession session =req.getSession(false);
+        String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
 
-         int userId = (int) session.getAttribute("loggedInUser");
-         String uri=req.getRequestURI();
+        boolean publicRoute = uri.equals(contextPath + LOGIN_URL)
+                || uri.equals(contextPath + REGISTER_URL)
+                || uri.equals(contextPath + "/")
+                || uri.endsWith("/index.jsp");
 
-         if(uri.endsWith(LOGIN_URL)|| uri.endsWith(REGISTER_URL)){
-             chain.doFilter(request,response);
-         return;
-         }
+        if (publicRoute) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-         if(userId<=0){
-             res.sendRedirect("/login");
-         }
-         else{
-             chain.doFilter(request, response);
+        HttpSession session = req.getSession(false);
+        User loggedInUser = session == null ? null : (User) session.getAttribute("loggedInUser");
 
-         }
+        if (loggedInUser == null) {
+            res.sendRedirect(contextPath + LOGIN_URL);
+            return;
+        }
+
+        chain.doFilter(request, response);
 
     }
 
